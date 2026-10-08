@@ -38,23 +38,23 @@ body {
     sans-serif;
 }
 
-/* WADAH UTAMA: Menggunakan 100dvh (Dynamic Viewport Height) agar tidak tertabrak navbar HP */
+/* WADAH UTAMA */
 .chess-app {
   display: flex;
-  flex-direction: column;
   height: 100vh;
-  height: 100dvh; /* Kunci presisi mobile viewport */
-  width: 100%;
-  max-width: 600px;
+  height: 100dvh;
+  width: 100vw;
+  width: 100dvw;
   margin: 0 auto;
   position: relative;
   background-color: var(--bg-color);
 }
 
-/* KARTU JAM DIBAGI 50:50 PRESISI */
+/* KARTU JAM */
 .clock-card {
-  flex: 1 1 0; /* flex-basis 0 memastikan porsi atas dan bawah identik */
-  min-height: 0; /* Mencegah overflow flex child */
+  flex: 1 1 0;
+  min-height: 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -64,35 +64,24 @@ body {
   overflow: hidden;
 }
 
-/* AREA HITAM (ATAS) - Mengakomodasi Notch HP */
 .black-card {
   background-color: var(--surface-black);
-  padding: calc(16px + env(safe-area-inset-top, 0px)) 24px 16px;
 }
 
 .black-card.active {
   background-color: var(--surface-active-black);
-  box-shadow: inset 0 -4px 0 var(--accent-gold);
 }
 
-/* AREA PUTIH (BAWAH) - Mengakomodasi Home Bar HP */
 .white-card {
   background-color: var(--surface-white);
-  padding: 16px 24px calc(16px + env(safe-area-inset-bottom, 0px));
 }
 
 .white-card.active {
   background-color: var(--surface-active-white);
-  box-shadow: inset 0 4px 0 var(--accent-cyan);
-}
-
-/* ROTASI 180 DERAJAT UNTUK LAWAN SEBERANG MEJA */
-.clock-card.rotated {
-  transform: rotate(180deg);
 }
 
 .clock-card.flagged {
-  background-color: rgba(239, 68, 68, 0.2) !important;
+  background-color: rgba(239, 68, 68, 0.22) !important;
   box-shadow: inset 0 0 24px rgba(239, 68, 68, 0.7) !important;
 }
 
@@ -158,7 +147,7 @@ body {
   font-weight: 600;
 }
 
-/* CONTAINER DISPLAY ANGKA: Selalu pas di tengah kartu */
+/* DISPLAY ANGKA JAM */
 .display-wrapper {
   display: flex;
   flex-direction: column;
@@ -170,7 +159,6 @@ body {
 
 .time-text {
   font-family: "JetBrains Mono", monospace;
-  font-size: clamp(3.2rem, 16vw, 6.2rem);
   line-height: 1;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
@@ -220,18 +208,15 @@ body {
   }
 }
 
-/* DOCK KONTROL TENGAH: Presisi di tengah layar */
+/* DOCK KONTROL TENGAH */
 .center-dock {
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 8px 16px;
   background-color: #0b0f19;
   position: relative;
   z-index: 20;
-  border-top: 1px solid var(--border-color);
-  border-bottom: 1px solid var(--border-color);
   box-shadow: var(--shadow-dock);
 }
 
@@ -244,7 +229,6 @@ body {
   align-items: center;
   gap: 3px;
   cursor: pointer;
-  padding: 6px 10px;
   border-radius: 8px;
 }
 
@@ -264,10 +248,7 @@ body {
   letter-spacing: 0.04em;
 }
 
-/* TOMBOL PLAY / PAUSE */
 .play-pulse-btn {
-  width: 52px;
-  height: 52px;
   border-radius: 50%;
   background: linear-gradient(135deg, #2563eb, #1d4ed8);
   border: 2px solid rgba(255, 255, 255, 0.15);
@@ -290,20 +271,131 @@ body {
 }
 
 .btn-action-icon {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
 }
 
-/* TICKS PEMISAH (OPSIONAL / ZERO-HEIGHT SUPAYA TIDAK MERUSAK SIMETRI) */
 .ticks {
-  display: none; /* Ditiadakan agar tidak mendorong tinggi dock keluar dari titik tengah */
+  display: none;
 }
 
-/* MODAL PRESET TURNAMEN */
+/* ========================================================
+   1. MODE PORTRAIT (HP Berdiri: Layout Atas - Bawah)
+   ======================================================== */
+@media (orientation: portrait) {
+  .chess-app {
+    flex-direction: column;
+    max-width: 600px;
+  }
+
+  .black-card {
+    padding: calc(16px + env(safe-area-inset-top, 0px)) 24px 16px;
+  }
+
+  .black-card.active {
+    box-shadow: inset 0 -4px 0 var(--accent-gold);
+  }
+
+  .white-card {
+    padding: 16px 24px calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .white-card.active {
+    box-shadow: inset 0 4px 0 var(--accent-cyan);
+  }
+
+  .clock-card.rotated {
+    transform: rotate(180deg);
+  }
+
+  .center-dock {
+    flex-direction: row;
+    padding: 8px 16px;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .dock-btn {
+    padding: 6px 10px;
+  }
+
+  .play-pulse-btn {
+    width: 52px;
+    height: 52px;
+  }
+
+  .time-text {
+    font-size: clamp(3.2rem, 16vw, 6.2rem);
+  }
+}
+
+/* ========================================================
+   2. MODE LANDSCAPE (HP Miring: Layout Kiri - Kanan)
+   ======================================================== */
+@media (orientation: landscape) {
+  .chess-app {
+    flex-direction: row; /* Berubah menjadi kiri-kanan */
+    max-width: 100%;
+  }
+
+  /* Sisi Kiri (Hitam) */
+  .black-card {
+    padding: 16px 20px 16px calc(20px + env(safe-area-inset-left, 0px));
+  }
+
+  .black-card.active {
+    box-shadow: inset -4px 0 0 var(--accent-gold);
+  }
+
+  /* Sisi Kanan (Putih) */
+  .white-card {
+    padding: 16px calc(20px + env(safe-area-inset-right, 0px)) 16px 20px;
+  }
+
+  .white-card.active {
+    box-shadow: inset 4px 0 0 var(--accent-cyan);
+  }
+
+  /* Pada mode landscape, jangan putar 180° agar teks tidak terbalik di sisi samping */
+  .clock-card.rotated {
+    transform: none;
+  }
+
+  /* Toolbar menjadi pilar ramping di tengah */
+  .center-dock {
+    flex-direction: column;
+    padding: 12px 10px;
+    border-left: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .dock-btn {
+    padding: 6px 4px;
+    width: 100%;
+  }
+
+  .dock-label {
+    display: none; /* Sembunyikan teks label tombol agar dock tetap ramping */
+  }
+
+  .play-pulse-btn {
+    width: 46px;
+    height: 46px;
+    margin: 4px 0;
+  }
+
+  .time-text {
+    font-size: clamp(2.8rem, 11vw, 5.2rem);
+  }
+}
+
+/* MODAL PRESET */
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.82);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
@@ -317,7 +409,9 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
   padding: 20px;
 }
 
