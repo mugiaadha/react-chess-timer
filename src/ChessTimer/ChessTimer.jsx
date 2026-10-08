@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import "./App.css";
+import "./ChessTimer.css";
 
 const PRESETS = [
   { name: "1 min", time: 60, inc: 0, tag: "Bullet" },
@@ -14,7 +14,7 @@ const PRESETS = [
   { name: "30 min", time: 1800, inc: 0, tag: "Classical" },
 ];
 
-export default function App() {
+export default function ChessTimer() {
   const [baseTime, setBaseTime] = useState(300);
   const [increment, setIncrement] = useState(0);
 
