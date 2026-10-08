@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import "./ChessTimer.css";
+import "./App.css";
 
-// Preset Turnamen Populer (waktu awal dalam detik, increment dalam detik)
 const PRESETS = [
   { name: "1 min", time: 60, inc: 0, tag: "Bullet" },
   { name: "1 | 1", time: 60, inc: 1, tag: "Bullet" },
@@ -15,35 +14,30 @@ const PRESETS = [
   { name: "30 min", time: 1800, inc: 0, tag: "Classical" },
 ];
 
-export default function ChessTimer() {
-  // Pengaturan Waktu
-  const [baseTime, setBaseTime] = useState(300); // 5 Menit
+export default function App() {
+  const [baseTime, setBaseTime] = useState(300);
   const [increment, setIncrement] = useState(0);
 
-  // Status Permainan
-  const [timeWhite, setTimeWhite] = useState(300000); // dalam milidetik
+  const [timeWhite, setTimeWhite] = useState(300000);
   const [timeBlack, setTimeBlack] = useState(300000);
-  const [activePlayer, setActivePlayer] = useState(null); // 'white', 'black', atau null
+  const [activePlayer, setActivePlayer] = useState(null);
   const [movesWhite, setMovesWhite] = useState(0);
   const [movesBlack, setMovesBlack] = useState(0);
   const [isPaused, setIsPaused] = useState(true);
-  const [winner, setWinner] = useState(null); // 'white', 'black', atau null
+  const [winner, setWinner] = useState(null);
 
-  // Preferensi UI & UX
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [isFaceToFace, setIsFaceToFace] = useState(true);
+  const [isDockHidden, setIsDockHidden] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
 
-  // Form custom modal
   const [customMin, setCustomMin] = useState(5);
   const [customSec, setCustomSec] = useState(0);
   const [customInc, setCustomInc] = useState(3);
 
-  // Audio Context Ref
   const audioCtxRef = useRef(null);
   const lastTickTimeRef = useRef(null);
 
-  // Inisialisasi Audio Synthesizer (Web Audio API murni)
   const initAudio = () => {
     if (!audioCtxRef.current) {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -71,7 +65,6 @@ export default function ChessTimer() {
         const now = ctx.currentTime;
 
         if (type === "click") {
-          // Suara saklar jam mekanik kayu
           osc.type = "triangle";
           osc.frequency.setValueAtTime(620, now);
           osc.frequency.exponentialRampToValueAtTime(140, now + 0.045);
@@ -79,16 +72,7 @@ export default function ChessTimer() {
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.045);
           osc.start(now);
           osc.stop(now + 0.05);
-        } else if (type === "warning") {
-          // Peringatan waktu sekarat
-          osc.type = "sine";
-          osc.frequency.setValueAtTime(880, now);
-          gain.gain.setValueAtTime(0.2, now);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
-          osc.start(now);
-          osc.stop(now + 0.09);
         } else if (type === "timeout") {
-          // Alarm bendera waktu habis
           osc.type = "sawtooth";
           osc.frequency.setValueAtTime(440, now);
           osc.frequency.linearRampToValueAtTime(220, now + 0.4);
@@ -98,13 +82,12 @@ export default function ChessTimer() {
           osc.stop(now + 0.45);
         }
       } catch {
-        // Audio fallback jika browser memblokir autoplay
+        // Audio fallback
       }
     },
     [soundEnabled],
   );
 
-  // Main Loop Timer dengan Presisi Tinggi
   useEffect(() => {
     let animId;
     if (!isPaused && activePlayer && !winner) {
@@ -147,12 +130,10 @@ export default function ChessTimer() {
     return () => cancelAnimationFrame(animId);
   }, [isPaused, activePlayer, winner, playSound]);
 
-  // Handle Switch Turn
   const handlePlayerTap = (player) => {
     initAudio();
     if (winner) return;
 
-    // Jika timer masih belum mulai, tap pertama memulai giliran lawan
     if (activePlayer === null) {
       if (player === "white") {
         setActivePlayer("black");
@@ -166,7 +147,6 @@ export default function ChessTimer() {
       return;
     }
 
-    // Hanya jam pemain yang sedang aktif yang merespon tap untuk mengoper giliran
     if (player === activePlayer && !isPaused) {
       if (player === "white") {
         setTimeWhite((t) => t + increment * 1000);
@@ -181,7 +161,6 @@ export default function ChessTimer() {
     }
   };
 
-  // Kontrol Game
   const togglePause = () => {
     if (winner) return;
     initAudio();
@@ -216,7 +195,6 @@ export default function ChessTimer() {
     setShowSettings(false);
   };
 
-  // Keyboard Shortcuts (Space: Pause, A: White, L: Black, R: Reset)
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (showSettings) return;
@@ -235,7 +213,6 @@ export default function ChessTimer() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isPaused, activePlayer, winner, showSettings]);
 
-  // Format Tampilan Waktu Monospace
   const formatTime = (ms) => {
     if (ms <= 0) return "00:00.0";
     const totalSec = ms / 1000;
@@ -246,7 +223,6 @@ export default function ChessTimer() {
 
     const pad = (n) => String(n).padStart(2, "0");
 
-    // Menampilkan desimal jika waktu kurang dari 20 detik
     if (totalSec < 20) {
       return `${pad(mins)}:${pad(secs)}.${tenths}`;
     }
@@ -258,7 +234,7 @@ export default function ChessTimer() {
 
   return (
     <div className="chess-app">
-      {/* AREA PEMAIN HITAM (SISI ATAS) */}
+      {/* SISI PEMAIN HITAM */}
       <section
         className={`clock-card black-card ${activePlayer === "black" && !isPaused ? "active" : ""} ${
           isFaceToFace ? "rotated" : ""
@@ -291,9 +267,26 @@ export default function ChessTimer() {
         </div>
       </section>
 
+      {/* TOMBOL MUNCULKAN MENU JIKA DISEMBUNYIKAN */}
+      {isDockHidden && (
+        <button
+          className="dock-unhide-btn"
+          onClick={() => setIsDockHidden(false)}
+          title="Tampilkan Menu"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </button>
+      )}
+
       {/* DOCK KONTROL TENGAH */}
-      <div className="ticks"></div>
-      <nav className="center-dock">
+      <nav className={`center-dock ${isDockHidden ? "dock-hidden" : ""}`}>
         <button
           className="dock-btn"
           onClick={() => setIsFaceToFace(!isFaceToFace)}
@@ -349,7 +342,6 @@ export default function ChessTimer() {
           </span>
         </button>
 
-        {/* Tombol Utama Play / Pause */}
         <button
           className={`play-pulse-btn ${!isPaused ? "running" : ""}`}
           onClick={togglePause}
@@ -418,10 +410,30 @@ export default function ChessTimer() {
           </svg>
           <span className="dock-label">Waktu</span>
         </button>
-      </nav>
-      <div className="ticks"></div>
 
-      {/* AREA PEMAIN PUTIH (SISI BAWAH) */}
+        <button
+          className="dock-btn"
+          onClick={() => setIsDockHidden(true)}
+          title="Sembunyikan Menu"
+        >
+          <svg
+            className="dock-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"
+            />
+          </svg>
+          <span className="dock-label">Hide</span>
+        </button>
+      </nav>
+
+      {/* SISI PEMAIN PUTIH */}
       <section
         className={`clock-card white-card ${activePlayer === "white" && !isPaused ? "active" : ""} ${
           winner === "black" ? "flagged" : ""
@@ -454,7 +466,7 @@ export default function ChessTimer() {
         </div>
       </section>
 
-      {/* MODAL PENGATURAN PRESET TURNAMEN */}
+      {/* MODAL PRESET & PENGATURAN */}
       {showSettings && (
         <div className="modal-backdrop">
           <div className="modal-content">

@@ -516,3 +516,86 @@ body {
   font-weight: 600;
   cursor: pointer;
 }
+
+/* EFEK TRANSISI SAAT DOCK DISEMBUNYIKAN */
+.center-dock {
+  transition:
+    transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.2s ease,
+    max-height 0.25s ease;
+}
+
+@media (orientation: portrait) {
+  .center-dock.dock-hidden {
+    transform: translateY(-100%);
+    opacity: 0;
+    pointer-events: none;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border: none;
+  }
+
+  /* Tombol Unhide Mengambang di Tepi Tengah */
+  .dock-unhide-btn {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    z-index: 30;
+    background: rgba(17, 24, 39, 0.85);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(6px);
+  }
+}
+
+@media (orientation: landscape) {
+  .center-dock.dock-hidden {
+    transform: translateX(-100%);
+    opacity: 0;
+    pointer-events: none;
+    max-width: 0;
+    padding-left: 0;
+    padding-right: 0;
+    border: none;
+  }
+
+  .dock-unhide-btn {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 30;
+    background: rgba(17, 24, 39, 0.85);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(6px);
+  }
+}
+
+.dock-unhide-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.dock-unhide-btn:active {
+  background: var(--surface-active-white);
+  color: var(--text-primary);
+}
