@@ -12,8 +12,7 @@
   --border-color: rgba(255, 255, 255, 0.12);
   --text-primary: #f9fafb;
   --text-muted: #9ca3af;
-  --shadow-dock:
-    0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  --shadow-dock: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
 }
 
 * {
@@ -22,9 +21,14 @@
   padding: 0;
   user-select: none;
   -webkit-user-select: none;
+  -webkit-touch-callout: none;
 }
 
+html,
 body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
   background-color: var(--bg-color);
   color: var(--text-primary);
   font-family:
@@ -32,54 +36,54 @@ body {
     -apple-system,
     BlinkMacSystemFont,
     sans-serif;
-  overflow: hidden;
 }
 
-/* CONTAINER APLIKASI */
+/* WADAH UTAMA: Menggunakan 100dvh (Dynamic Viewport Height) agar tidak tertabrak navbar HP */
 .chess-app {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  width: 100vw;
-  max-width: 768px;
+  height: 100dvh; /* Kunci presisi mobile viewport */
+  width: 100%;
+  max-width: 600px;
   margin: 0 auto;
   position: relative;
   background-color: var(--bg-color);
 }
 
-/* KARTU JAM CATUR (DUAL SLAB) */
+/* KARTU JAM DIBAGI 50:50 PRESISI */
 .clock-card {
-  flex: 1;
+  flex: 1 1 0; /* flex-basis 0 memastikan porsi atas dan bawah identik */
+  min-height: 0; /* Mencegah overflow flex child */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 24px 32px;
   cursor: pointer;
-  transition:
-    background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.3s ease;
+  transition: background-color 0.2s ease;
   position: relative;
   overflow: hidden;
 }
 
+/* AREA HITAM (ATAS) - Mengakomodasi Notch HP */
 .black-card {
   background-color: var(--surface-black);
-  border-bottom: 2px solid transparent;
+  padding: calc(16px + env(safe-area-inset-top, 0px)) 24px 16px;
 }
 
 .black-card.active {
   background-color: var(--surface-active-black);
-  box-shadow: inset 0 -6px 0 var(--accent-gold);
+  box-shadow: inset 0 -4px 0 var(--accent-gold);
 }
 
+/* AREA PUTIH (BAWAH) - Mengakomodasi Home Bar HP */
 .white-card {
   background-color: var(--surface-white);
-  border-top: 2px solid transparent;
+  padding: 16px 24px calc(16px + env(safe-area-inset-bottom, 0px));
 }
 
 .white-card.active {
   background-color: var(--surface-active-white);
-  box-shadow: inset 0 6px 0 var(--accent-cyan);
+  box-shadow: inset 0 4px 0 var(--accent-cyan);
 }
 
 /* ROTASI 180 DERAJAT UNTUK LAWAN SEBERANG MEJA */
@@ -87,10 +91,9 @@ body {
   transform: rotate(180deg);
 }
 
-/* WAKTU HABIS / BENDERA JATUH */
 .clock-card.flagged {
-  background-color: rgba(239, 68, 68, 0.18) !important;
-  box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.6) !important;
+  background-color: rgba(239, 68, 68, 0.2) !important;
+  box-shadow: inset 0 0 24px rgba(239, 68, 68, 0.7) !important;
 }
 
 /* HEADER & FOOTER KARTU */
@@ -99,46 +102,47 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-muted);
+  flex-shrink: 0;
 }
 
 .player-badge {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .dot {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   display: inline-block;
 }
 
 .dot-black {
-  background-color: #030712;
-  border: 1px solid #4b5563;
+  background-color: #000;
+  border: 1px solid #6b7280;
 }
 
 .dot-white {
-  background-color: #ffffff;
-  box-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
+  background-color: #fff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.8);
 }
 
 .move-counter {
   font-variant-numeric: tabular-nums;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .status-indicator {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  opacity: 0.7;
+  letter-spacing: 0.08em;
+  opacity: 0.6;
 }
 
 .active .status-indicator {
@@ -148,41 +152,43 @@ body {
 
 .inc-pill {
   background: rgba(255, 255, 255, 0.08);
-  padding: 3px 8px;
+  padding: 2px 8px;
   border-radius: 9999px;
   font-size: 11px;
   font-weight: 600;
 }
 
-/* DISPLAY ANGKA JAM UTAMA */
+/* CONTAINER DISPLAY ANGKA: Selalu pas di tengah kartu */
 .display-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   flex-grow: 1;
+  min-height: 0;
 }
 
 .time-text {
   font-family: "JetBrains Mono", monospace;
-  font-size: clamp(3.5rem, 12vw, 6.5rem);
+  font-size: clamp(3.2rem, 16vw, 6.2rem);
+  line-height: 1;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.04em;
-  color: #d1d5db;
+  color: #9ca3af;
   transition:
-    color 0.2s ease,
+    color 0.15s ease,
     transform 0.15s ease;
 }
 
 .active .time-text {
   color: #ffffff;
-  transform: scale(1.02);
+  transform: scale(1.03);
 }
 
 .time-text.urgent {
   color: var(--accent-danger) !important;
-  animation: pulseUrgent 1s infinite alternate;
+  animation: pulseUrgent 0.8s infinite alternate;
 }
 
 @keyframes pulseUrgent {
@@ -191,8 +197,8 @@ body {
     opacity: 1;
   }
   100% {
-    transform: scale(1.05);
-    opacity: 0.85;
+    transform: scale(1.06);
+    opacity: 0.8;
   }
 }
 
@@ -200,29 +206,32 @@ body {
   color: var(--accent-danger);
   font-weight: 800;
   letter-spacing: 0.15em;
-  font-size: 14px;
-  margin-top: 8px;
+  font-size: 12px;
+  margin-top: 6px;
   animation: blink 0.7s infinite alternate;
 }
 
 @keyframes blink {
   0% {
-    opacity: 0.4;
+    opacity: 0.3;
   }
   100% {
     opacity: 1;
   }
 }
 
-/* DOCK KONTROL TENGAH */
+/* DOCK KONTROL TENGAH: Presisi di tengah layar */
 .center-dock {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 12px 20px;
-  background-color: #0d1322;
+  padding: 8px 16px;
+  background-color: #0b0f19;
   position: relative;
-  z-index: 10;
+  z-index: 20;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
   box-shadow: var(--shadow-dock);
 }
 
@@ -233,126 +242,101 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   cursor: pointer;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: 8px;
-  transition: all 0.2s ease;
 }
 
-.dock-btn:hover {
-  color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.05);
+.dock-btn:active {
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .dock-icon {
-  width: 20px;
-  height: 20px;
+  width: 19px;
+  height: 19px;
 }
 
 .dock-label {
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
 }
 
-/* TOMBOL PLAY / PAUSE UTAMA */
+/* TOMBOL PLAY / PAUSE */
 .play-pulse-btn {
-  width: 58px;
-  height: 58px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  border: 3px solid rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.15);
   color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
-  transition:
-    transform 0.15s ease,
-    background 0.2s ease;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+  transition: transform 0.1s ease;
 }
 
-.play-pulse-btn:hover {
-  transform: scale(1.06);
+.play-pulse-btn:active {
+  transform: scale(0.95);
 }
 
 .play-pulse-btn.running {
   background: linear-gradient(135deg, #d97706, #b45309);
-  box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4);
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.4);
 }
 
 .btn-action-icon {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
 }
 
-/* GARIS BATAS TICK (Sesuai referensi styling Anda) */
+/* TICKS PEMISAH (OPSIONAL / ZERO-HEIGHT SUPAYA TIDAK MERUSAK SIMETRI) */
 .ticks {
-  position: relative;
-  width: 100%;
-  border-top: 1px solid var(--border-color);
+  display: none; /* Ditiadakan agar tidak mendorong tinggi dock keluar dari titik tengah */
 }
 
-.ticks::before,
-.ticks::after {
-  content: "";
-  position: absolute;
-  top: -4.5px;
-  border: 5px solid transparent;
-}
-
-.ticks::before {
-  left: 0;
-  border-left-color: var(--border-color);
-}
-
-.ticks::after {
-  right: 0;
-  border-right-color: var(--border-color);
-}
-
-/* MODAL PRESET & PENGATURAN */
+/* MODAL PRESET TURNAMEN */
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 50;
+  z-index: 100;
   padding: 16px;
 }
 
 .modal-content {
   background: #1e293b;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 16px;
   width: 100%;
-  max-width: 440px;
-  padding: 24px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  max-width: 400px;
+  padding: 20px;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .modal-header h3 {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 700;
 }
 
 .close-btn {
   background: transparent;
   border: none;
-  font-size: 24px;
+  font-size: 26px;
   color: var(--text-muted);
   cursor: pointer;
 }
@@ -360,61 +344,59 @@ body {
 .preset-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-bottom: 24px;
+  gap: 8px;
+  margin-bottom: 20px;
 }
 
 .preset-item {
   background: #0f172a;
   border: 1px solid var(--border-color);
-  padding: 12px;
+  padding: 10px;
   border-radius: 8px;
   color: var(--text-primary);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
-.preset-item:hover,
 .preset-item.selected {
   border-color: #3b82f6;
   background: rgba(59, 130, 246, 0.15);
 }
 
 .preset-tag {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--text-muted);
   text-transform: uppercase;
   font-weight: 700;
 }
 
 .preset-name {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   font-family: "JetBrains Mono", monospace;
 }
 
 .custom-time-form h4 {
-  font-size: 14px;
-  margin-bottom: 12px;
+  font-size: 13px;
+  margin-bottom: 10px;
   color: var(--text-muted);
 }
 
 .input-row {
   display: flex;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin-bottom: 14px;
 }
 
 .input-row label {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  font-size: 12px;
+  gap: 4px;
+  font-size: 11px;
   color: var(--text-muted);
 }
 
@@ -426,7 +408,8 @@ body {
   border-radius: 6px;
   text-align: center;
   font-family: "JetBrains Mono", monospace;
-  font-size: 16px;
+  font-size: 15px;
+  width: 100%;
 }
 
 .btn-apply {
@@ -434,27 +417,8 @@ body {
   background: #2563eb;
   color: white;
   border: none;
-  padding: 12px;
+  padding: 11px;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
-}
-
-.btn-apply:hover {
-  background: #1d4ed8;
-}
-
-/* RESPONSIVE LAYOUT */
-@media (max-width: 480px) {
-  .clock-card {
-    padding: 16px;
-  }
-  .center-dock {
-    padding: 8px 12px;
-  }
-  .play-pulse-btn {
-    width: 48px;
-    height: 48px;
-  }
 }
