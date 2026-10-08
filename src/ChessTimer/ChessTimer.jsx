@@ -289,8 +289,8 @@ export default function ChessTimer() {
       <nav className={`center-dock ${isDockHidden ? "dock-hidden" : ""}`}>
         <button
           className="dock-btn"
-          onClick={() => setIsFaceToFace(!isFaceToFace)}
-          title="Mode Hadap Lawan (180°)"
+          onClick={() => setIsDockHidden(true)}
+          title="Sembunyikan Menu"
         >
           <svg
             className="dock-icon"
@@ -302,14 +302,11 @@ export default function ChessTimer() {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth="2"
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"
             />
           </svg>
-          <span className="dock-label">
-            {isFaceToFace ? "Tatap Muka" : "Searah"}
-          </span>
+          <span className="dock-label">Hide</span>
         </button>
-
         <button
           className="dock-btn"
           onClick={() => setSoundEnabled(!soundEnabled)}
@@ -341,7 +338,6 @@ export default function ChessTimer() {
             {soundEnabled ? "Suara ON" : "Mute"}
           </span>
         </button>
-
         <button
           className={`play-pulse-btn ${!isPaused ? "running" : ""}`}
           onClick={togglePause}
@@ -365,7 +361,6 @@ export default function ChessTimer() {
             </svg>
           )}
         </button>
-
         <button
           className="dock-btn"
           onClick={() => resetGame()}
@@ -386,7 +381,6 @@ export default function ChessTimer() {
           </svg>
           <span className="dock-label">Reset</span>
         </button>
-
         <button
           className="dock-btn"
           onClick={() => {
@@ -409,27 +403,6 @@ export default function ChessTimer() {
             />
           </svg>
           <span className="dock-label">Waktu</span>
-        </button>
-
-        <button
-          className="dock-btn"
-          onClick={() => setIsDockHidden(true)}
-          title="Sembunyikan Menu"
-        >
-          <svg
-            className="dock-icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"
-            />
-          </svg>
-          <span className="dock-label">Hide</span>
         </button>
       </nav>
 
